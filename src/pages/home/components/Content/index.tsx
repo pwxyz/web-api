@@ -1,73 +1,43 @@
 
 
 import React from 'react'
-import MySelect from './MySelect'
-import Parmas from './Parmas'
-import ReactJson from 'react-json-view'
-import { Input } from 'antd'
+import { Input, Select } from 'antd'
+import Path from './Path'
 
-const Path = () => (
-    <div>
-      /analyse/attacker-details-ip
-    </div>
-    )
 
-const obj = {
-  "status": 1,
-  "message": "错误信息",
-  "payload": {
-    "data": [
-      {
-        "attackedFirstTime": "string",
-        "attackedLatelyTime": "string",
-        "attatcedAssetIp": "string",
-        "attackedCount": "string",
-        "assetStates": "string",
-        "level": "string"
-      },
-      {
-        "attackedFirstTime": "string",
-        "attackedLatelyTime": "string",
-        "attatcedAssetIp": "string",
-        "attackedCount": "string",
-        "assetStates": "string",
-        "level": "string"
-      },
-    ],
-    "total": 10
-  }
-}
+const methodArr = ['get', 'post', 'put', 'delete' ]
 
-const CreateTable = () => {
-  return(
-    <div></div>
-  )
-}
+const typeArr = ['string', 'integer', 'boolean', 'array', 'object' ]
 
-const Span = props => <span style={{ display:'inline-block', maxWidth: 300, minWidth:100 }}  >{props.children}</span>
+const SelectItem = ({arr}) => 
+  <Select defaultValue={ arr[0] } style={{ width: 120, textTransform:'uppercase' }}>
+    {
+      arr.map(( i, index ) => 
+        <Select.Option value={ i } key={ index }  >
+          <div style={{ textTransform:'uppercase' }} >{ i }</div>
+        </Select.Option> )
+    }
+  </Select>
 
-const CreateColumns = () => {
-  return(
-    <div>
-      <Span>标题</Span><Span><Input  /></Span>
-      <Span>key</Span><Span><Input  /></Span>
-      <Span>操作</Span>
-        <Span>
-          <MySelect />
-        </Span>
-    </div>
-  )
-}
+const InputItem = ({ name, placeholder }) => 
+  <div>
+    <span style={{ minWidth:80, display:'inline-block' }} >{`${name}:    `}</span><Input  style={{ width:300 }} placeholder={ placeholder } />
+  </div>
+
 
 const Content = () => {
-
   return (
-    <div>
-      <Path />
-      <MySelect />
-      {/* <Parmas obj={ obj } /> */}
-      {/* <ReactJson src={ obj } />  */}
-      <CreateColumns />
+    <div style={{ border:'1px solid rgba(0,0,0,0.3)', padding:15 }} >
+      <InputItem  name={ 'path' } placeholder={ 'api地址' } />
+      <InputItem  name={ 'description' }  placeholder={ '作用描述' } />
+      <InputItem  name={ 'tag' }  placeholder={ '标签' } />
+      <SelectItem arr={ methodArr } />
+      <div>
+        <div>Req</div>
+        <Input addonBefore='name' style={{ width:200 }} />
+        <Input addonBefore='description' style={{ width:200 }} />
+        <SelectItem arr={ typeArr } />
+      </div>
     </div>
   )
 }

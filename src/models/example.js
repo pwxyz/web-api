@@ -7,6 +7,10 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }) {
+      let { pathname } = history.location
+      if(pathname==='/'){
+        history.push('/home')
+      }
     },
   },
 

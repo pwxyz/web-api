@@ -4,6 +4,7 @@ import React from 'react'
 // import { connect } from 'dva'
 import Content from './components/Content'
 import { Button } from 'antd'
+import Path from './components/Path'
 
 interface props {
 
@@ -45,7 +46,8 @@ class Home extends React.Component<props, state>{
     return(
       <div>
         <input type='file' accept={ 'application/json' }  onChange={ this.getFile } ref={ file => this.refss = file }  />
-        <Content />
+        {/* <Content /> */}
+        <Path />
       </div>
     )
   }

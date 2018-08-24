@@ -1,3 +1,8 @@
+// const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+
+import path from 'path'
+
 export default {
-  plugins: ['umi-plugin-dva', 'umi-plugin-polyfill'],
+  alias:{ "utils" : path.resolve(__dirname, './src/utils') },
+  plugins: ['umi-plugin-dva', 'umi-plugin-polyfill' ],
 }

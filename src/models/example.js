@@ -24,6 +24,10 @@ export default {
     save(state, action) {
       return { ...state, ...action.payload };
     },
+    editorChange(state, action){
+      console.log( state, action)
+      return { ...state, ...action.payload };
+    }
   },
 
 };

@@ -2,7 +2,15 @@
 
 import path from 'path'
 
+const alias = arr => {
+  let obj = {}
+  arr.map(i => {
+    obj[i] = path.resolve(__dirname, `./src/${i}`)
+  } )
+  return obj
+}
+
 export default {
-  alias:{ "utils" : path.resolve(__dirname, './src/utils') },
+  alias: alias(['utils', 'components' ]) ,
   plugins: ['umi-plugin-dva', 'umi-plugin-polyfill' ],
 }

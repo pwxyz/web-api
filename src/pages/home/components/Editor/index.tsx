@@ -7,13 +7,13 @@ import { connect } from 'dva'
 
 
 interface props{
-  initValue: string
+  value: string
   type: string
 }
 
 interface state{
   type: string
-  code: string
+  // code: string
 }
 
 const getValue = value => {
@@ -25,7 +25,7 @@ class App extends React.Component <props, state>{
   constructor(props) {
     super(props);
     this.state = {
-      code: this.props.initValue||  '// type your code...',
+      // code: this.props.initValue||  '// type your code...',
       type: this.props.type || 'example/editorChange'
     }
   }
@@ -33,18 +33,15 @@ class App extends React.Component <props, state>{
   ref=null
 
   editorDidMount(editor, monaco) {
-    let  { dispatch }= window['g_app']._store
-    // console.log(dispatch)
   }
 
   onChange = value => {
     let  { dispatch }= window['g_app']._store
-    console.log( this.state.type)
-    dispatch({ type: 'home/resChange', payload: { res: value } })
+    // console.log( this.state.type)
+    dispatch({ type: 'home/resChange', payload: value })
   }
 
   render() {
-    const code = this.state['code']
     const options = {
       // selectOnLineNumbers: true
     }
@@ -55,7 +52,7 @@ class App extends React.Component <props, state>{
         ref="monaco"
         language="json"
         theme="vs"
-        value={code}
+        value={this.props.value}
         options={options}
         onChange={this.onChange}
         editorDidMount={this.editorDidMount}

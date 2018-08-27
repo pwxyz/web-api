@@ -1,13 +1,22 @@
 
 
 import React from 'react'
-import Editor from '../edit/components/Editor'
+import Editor from './components/Editor'
+import { Button, Table } from 'antd'
+import Req from './components/Req'
 
-import MyEdit from './components/MyEdit'
-import { Button } from 'antd'
+import  commonProps from 'components/commonProps'
 
 interface props {
-
+  state: {
+    home:{
+      res: string
+      sourceObj: object
+      parameters: Array<object>
+    }
+    
+  }
+  dispatch: (any:any) => void
 }
 
 interface state{
@@ -15,16 +24,9 @@ interface state{
 }
 
 
-const initRes = 
-`{
-  "status|状态":1,
-  "message|信息":"获取成功",
-  "payload":{
-
-  }
-}`
 
 
+@commonProps()
 class Home extends React.Component<props, state>{
   constructor(props){
     super(props)
@@ -53,7 +55,19 @@ class Home extends React.Component<props, state>{
     }
   }
 
-  ref=null 
+   columns = [
+    { title: '描述', dataIndex: 'description' },
+    { title: '值或者key', dataIndex: 'name' },
+    { title: '类型', dataIndex: 'type' },
+    { title: '必须', dataIndex: 'required', render: text => <div>{ text? '是' : '否' }</div>  },
+    // { title: '参数所在位置', dataIndex: 'where'  },
+    { title: '操作',  dataIndex:'action', render: ( text, record, index ) => <div style={{ color:'red', cursor:'pointer' }} 
+                              onClick={e=> this.deleteParams(index) } >删除</div> }
+  ]
+  
+  deleteParams = num => {
+    this.props.dispatch({ type: 'home/deleteParams', payload: num })
+  }
 
   getValue =e => {
     let value = e.target.value
@@ -63,21 +77,24 @@ class Home extends React.Component<props, state>{
   
   }
 
-  getRes = () => {
-    console.log(this.ref.refs.monaco.editor.getModel().getValue())
-  }
 
   render(){
-    console.log(this.state.sourceObj)
+    // console.log(this.state.sourceObj)
+    const { res, sourceObj, parameters } = this.props.state.home
+    let data = parameters.map((i, index )=> { i['key'] = index; return i } )
+    console.log(data)
     return(
       <div>
         <input type='file' accept={ 'application/json' }  onChange={ this.getFile } ref={ file => this.refss = file }  />
-        
+
+        <Req sourceObj={ sourceObj } />
+
+        <Table columns={ this.columns } dataSource={ data } style={{ width:800 }}  />
         <div style={{ width:800, height:400 }} id='json' >
-          <span>res</span>
-          <Editor initValue={ initRes }  ref={ ref=> this.ref = ref } />
+          <span style={{ margin:20, fontSize:20 }} >res</span>
+          <Editor value={ res }   type='home/resChange'  />
         </div>
-        <Button type='primary' onClick={ this.getRes } >提交</Button>
+        <Button type='primary'  >提交</Button>
       </div>
     )
   }

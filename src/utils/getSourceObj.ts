@@ -38,7 +38,7 @@ const getSourceObj = str => {
     if(obj.payload){
       // let arr = Object.keys(obj.payload)
       let arr = getObjAllKeys(obj.payload)
-      console.log(arr)
+      // console.log(arr)
       initObj.description = arr.map(i => i.split('|')[1].split('&')[0])
       initObj.name = arr.map(i =>i.split('|')[0] )
       initObj.type = arr.map(i => i.split('|')[1].split('&')[1] )
@@ -47,8 +47,8 @@ const getSourceObj = str => {
     return initObj
   }
   catch(err){
-    return initObj
     console.warn('input schema is err')
+    return initObj
   }
 }
 

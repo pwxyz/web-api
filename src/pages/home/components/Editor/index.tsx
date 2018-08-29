@@ -9,6 +9,8 @@ import { connect } from 'dva'
 interface props{
   value: string
   type: string
+  width: number
+  height: number
 }
 
 interface state{
@@ -47,8 +49,8 @@ class App extends React.Component <props, state>{
     }
     return (
       <MonacoEditor
-        // width={800}
-        // height={ 500 }
+        width={this.props.width || 800}
+        height={ this.props.height ||600 }
         ref="monaco"
         language="json"
         theme="vs"

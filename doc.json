@@ -82,6 +82,13 @@
                       "total": {
                         "$ref": "#/definitions/total"
                       },
+                      "test":{
+                        "type":"array",
+                        "items":{
+                          "type":"string",
+                          "description":"OK"
+                        }
+                      },
                       "data": {
                         "type": "array",
                         "items": {

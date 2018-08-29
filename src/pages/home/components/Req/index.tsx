@@ -2,6 +2,7 @@
 import React from 'react'
 import { AutoComplete, Select, Switch, Button, message } from 'antd'
 import commonProps from 'components/commonProps'
+import filterSelectParmas from 'utils/filterSelectParmas'
 
 const Item = ({ text, onChange, value, type='input', initValue='', sourceObj={}, selectValue=any => any }) => 
   <div style={{ margin:10 }} >
@@ -14,7 +15,7 @@ const Item = ({ text, onChange, value, type='input', initValue='', sourceObj={},
                                       }  }
                                       value={ initValue }
                                       onSelect = { select => selectValue(sourceObj[value].indexOf(select)) }   
-                                      style={{ width:400, border: `1px solid ${initValue? 'rgba(0,0,0,0.0)' : 'red'  }`, borderRadius:4 }} 
+                                      style={{ width:400, }} 
                                       placeholder={ value } /> :
       type==='select' ?<Select value={ initValue } onChange={ value => onChange({ type: value })  } style={{ width:120 }} >
                           {
@@ -22,7 +23,7 @@ const Item = ({ text, onChange, value, type='input', initValue='', sourceObj={},
                             <Select.Option key={ i }  >{i}</Select.Option>)
                           }
                       </Select> :
-                      <Switch checked={  !!initValue } onChange={value =>onChange({ required: value })} />
+                      <Switch checked={  !!initValue } onChange={value =>onChange({ required: value })}  />
     }
     
   </div>
@@ -36,12 +37,14 @@ const typeArr = ['string', 'integer', 'object', 'array' ]
 
 interface props{
   sourceObj: object
+  reqTable: Array<object>
   state?:{
     home:{
       req: {
         type: string
         required: any
-      }
+      },
+      needToken: boolean
     }
     
   }
@@ -49,10 +52,6 @@ interface props{
 }
 
 interface state{
-  req: {
-    type: string
-    required: any
-  }
 }
 
 @commonProps()
@@ -73,7 +72,7 @@ class Req extends React.Component<props, state>{
   addParams = () => {
     let req = this.props.state.home.req
     console.log(req)
-    if(this.chechObj(req)){
+    if(this.checkObj(req)){
       this.props.dispatch({ type: 'home/addParams' })
     }
     else {
@@ -81,22 +80,32 @@ class Req extends React.Component<props, state>{
     }
   }
 
-  chechObj = obj => {
+  checkObj = obj => {
     for(let key in obj){
-      if(!obj[key]&&typeof obj[key]!=='boolean') return false 
+      if(!obj[key]&&['boolean', 'number'].indexOf( typeof obj[key] )===-1) return false 
     }
     return true
   }
 
+  tokenChange = value => {
+    this.props.dispatch({ type:'home/tokenChange', payload: value })
+  }
+
   render(){
     
-    const { sourceObj, state } = this.props
-    console.log(state.home)
+    const { sourceObj, state, reqTable } = this.props
+
+    // console.log('filterSelectParmas',filterSelectParmas(sourceObj, reqTable))
+    const sources = filterSelectParmas(sourceObj, reqTable)
     return(
       <div>
+        <div>
+          <div style={{ margin:10, fontSize: 20 }} >req</div>
+          <span style={{ margin:10 }} >token</span><Switch checked={ state.home.needToken } onChange={ this.tokenChange }  />
+        </div>
         {
           arr.map(i =>
-          <Item key={ i.value } text={ i.text } value={ i.value } onChange={ this.onChange } sourceObj={ sourceObj }
+          <Item key={ i.value } text={ i.text } value={ i.value } onChange={ this.onChange } sourceObj={ sources }
                 selectValue = { this.selectValue } initValue={ state.home.req[i.value] } />)
         }
         <Item  text={ '类型' } value={ 'type' } onChange={ this.onChange } type='select' initValue={ state.home.req.type } />

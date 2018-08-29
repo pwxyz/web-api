@@ -1,5 +1,9 @@
 
 import getSourceObj from 'utils/getSourceObj'
+import { methodArr, initApiData } from './constants'
+import reqToParameters from  'utils/reqToParameters'
+import addPathItem  from 'utils/addPathItem'
+
 
 const initRes = 
 `{
@@ -10,43 +14,42 @@ const initRes =
   }
 }`
 
-const xx = 
-`{
-  "status|状态":1,
-  "message|信息":"获取成功",
-  "payload":{
-    "data|表格":[{
-      "name|名字":"bob",
-      "age|年龄": 15,
-      "like|爱好": "game"
-    }]
-  }
-}`
 
-const initParmas = [
-  { text: '每页的数量', value: 'limit', type: 'integer' },
-  { text: '页面', value: 'page', type: 'integer' },
-  { text: '', value: 'limit', type: 'integer' },
+const inintReqTable = [
+  { description: '每页的数量', name: 'limit', type: 'integer', required: true },
+  { description: '页面', name: 'page', type: 'integer', required: true },
 ]
 
 const initReq = {
     type: 'string',
-    required: true,
+    required: false,
     description:'',
     name:''
+}
+
+const initState = {
+  router:'',
+  tags: '',
+  description:'',
+  req: initReq,
+  res: initRes,
 }
 
 
 export default {
   namespace: 'home',
   state: {
-    path:'',
+    apiData:initApiData,
+    router:'',
+    tags: '',
+    tagsList: initApiData.tags||[],
     description:'',
-    method: '',
+    method: methodArr[0],
     req: initReq,
-    parameters: [],
-    res: xx,
-    sourceObj: getSourceObj(xx)
+    reqTable: inintReqTable,
+    res: initRes,
+    needToken: true,
+    sourceObj: getSourceObj(initRes)
   },
 
   subscriptions:{
@@ -59,7 +62,7 @@ export default {
 
   reducers: {
     resChange(state, action){
-      console.log(getSourceObj(action.payload))
+      // console.log(getSourceObj(action.payload))
       let sourceObj = getSourceObj(action.payload)
       return { ...state, res: action.payload, sourceObj };
     },
@@ -77,22 +80,49 @@ export default {
     },
 
     setReqInput(state, action){
-      console.log('setReqInput', action)
       let req = { ...state.req, ...action.payload }
-      
       return { ...state, req }
     },
 
     addParams(state, action){
       let obj = { ...state.req, in: state.method!=='get' ? 'body': 'query'  }
-      let parameters = state.parameters.concat([{ ...obj }])
-      return { ...state, parameters }
+      let reqTable = state.reqTable.concat([{ ...obj }])
+      console.log(reqToParameters(reqTable, 'get', true))
+      return { ...state, reqTable, req: initReq }
     },
 
     deleteParams(state, action){
-      let parameters = state.parameters
-      parameters = parameters.filter((i, index) => index!== action.payload )
-      return { ...state, parameters }
+      let reqTable = state.reqTable
+      reqTable = reqTable.filter((i, index) => index!== action.payload )
+      return { ...state, reqTable }
+    },
+
+    tokenChange(state, action){
+      return { ...state, needToken: action.payload }
+    },
+
+    titleChange(state, action){
+      return { ...state, ...action.payload }
+    },
+
+    addRouter(state, action){
+      let apiData = addPathItem(state)
+      console.log(!!apiData)
+      if(!!apiData){
+        return { ...state, apiData, ...initState }
+      }
+      else return { ...state }
+    },
+
+    addTags(state, action){
+      let tagsList = state.tagsList.concat(action.payload)
+      let  apiData = {  ...state.apiData, tags: tagsList }
+      return { ...state, tagsList, apiData }
+    },
+
+    uploadJson(state, action){
+      let apiData = action.payload
+      return { ...state, apiData }
     }
   }
 }

@@ -2,6 +2,7 @@
 
 
 const getValueType = arg => {
+
   if(Array.isArray(arg)){
     return 'array'
   }

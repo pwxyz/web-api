@@ -1,28 +1,19 @@
 
 
 import React from 'react'
-import Editor from './components/Editor'
-import { Button, Table } from 'antd'
-import Req from './components/Req'
-
 import  commonProps from 'components/commonProps'
+import ModalContent from './components/ModalContent'
+import { Modal, Button } from 'antd'
+
 
 interface props {
-  state: {
-    home:{
-      res: string
-      sourceObj: object
-      parameters: Array<object>
-    }
-    
-  }
-  dispatch: (any:any) => void
+  dispatch?: (any:any) => void
+  
 }
 
 interface state{
-  sourceObj: object
+  visible: boolean
 }
-
 
 
 
@@ -31,7 +22,7 @@ class Home extends React.Component<props, state>{
   constructor(props){
     super(props)
     this.state={
-      sourceObj:{}
+      visible: false
     }
   }
   refss = null
@@ -50,51 +41,38 @@ class Home extends React.Component<props, state>{
     reader.readAsText(file, 'UTF-8')
     reader.onload = function () {
         let str = reader.result +''
-        let sourceObj = JSON.parse(str) 
-        that.setState({ sourceObj })
+        let apiData = JSON.parse(str) 
+        // that.setState({ sourceObj })
+        that.props.dispatch({ type: 'home/uploadJson', payload: apiData})
+        localStorage.setItem( 'apiData', str )
     }
   }
-
-   columns = [
-    { title: '描述', dataIndex: 'description' },
-    { title: '值或者key', dataIndex: 'name' },
-    { title: '类型', dataIndex: 'type' },
-    { title: '必须', dataIndex: 'required', render: text => <div>{ text? '是' : '否' }</div>  },
-    // { title: '参数所在位置', dataIndex: 'where'  },
-    { title: '操作',  dataIndex:'action', render: ( text, record, index ) => <div style={{ color:'red', cursor:'pointer' }} 
-                              onClick={e=> this.deleteParams(index) } >删除</div> }
-  ]
-  
-  deleteParams = num => {
-    this.props.dispatch({ type: 'home/deleteParams', payload: num })
+  hideModal =() => {
+    this.setState({ visible: false })
   }
 
-  getValue =e => {
-    let value = e.target.value
-    let obj = JSON.parse(value)
-
-    console.log( JSON.parse(value) )
-  
+  showModal = () => {
+    this.setState({ visible: true })
   }
 
 
   render(){
-    // console.log(this.state.sourceObj)
-    const { res, sourceObj, parameters } = this.props.state.home
-    let data = parameters.map((i, index )=> { i['key'] = index; return i } )
-    console.log(data)
+
     return(
-      <div>
+      <div style={{ marginLeft:200 }} >
         <input type='file' accept={ 'application/json' }  onChange={ this.getFile } ref={ file => this.refss = file }  />
-
-        <Req sourceObj={ sourceObj } />
-
-        <Table columns={ this.columns } dataSource={ data } style={{ width:800 }}  />
-        <div style={{ width:800, height:400 }} id='json' >
-          <span style={{ margin:20, fontSize:20 }} >res</span>
-          <Editor value={ res }   type='home/resChange'  />
-        </div>
-        <Button type='primary'  >提交</Button>
+        <Button type='primary' onClick={ this.showModal } >新增路由</Button>
+        <Modal
+          visible={this.state.visible}
+          keyboard={ false }
+          maskClosable={ false }
+          width={ 1100 }
+          onCancel={this.hideModal}
+          footer={ null }
+        >
+          <ModalContent />
+        </Modal>
+        
       </div>
     )
   }

@@ -52,7 +52,7 @@ const checkRes = res => {
 }
 
 const addPathItem = state => {
-  const { router,tags, description, method,  reqTable, res, needToken,  apiData  } = state
+  const { router,tags, description, method,  reqTable, res, needToken,  apiData,   } = state
   if(!checkRouter(router)){
     message.error('router 格式不正确，正确的格式为/xx或/xx/xx-xx, 其中只允许a-z、A-Z、/、-这些字符')
     return 

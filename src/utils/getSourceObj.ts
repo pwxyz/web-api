@@ -33,8 +33,9 @@ const getSourceObj = str => {
     type:[],
   }
   try {
+    // console.log(str)
     let obj = JSON.parse(str)
-    
+    // console.log(obj)
     if(obj.payload){
       // let arr = Object.keys(obj.payload)
       let arr = getObjAllKeys(obj.payload)

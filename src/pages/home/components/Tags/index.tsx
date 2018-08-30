@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react'
 import commonPorps from 'components/commonProps'
-import { Input, Button, Table, message } from 'antd'
+import { Input, Button, Table, message, Collapse } from 'antd'
 import copy from 'utils/copy'
 
 
@@ -71,17 +71,27 @@ class Tags extends Component<props, state> {
     })
     const { name, description } = this.state.tagItem
     return(
-      <div>
-        <Input addonBefore={ 'name*' } onChange={ e=> this.onChange({ name: e.target.value }) } style={{ width:300 }} value={ name }  />
-        <Input addonBefore={ 'description*' } onChange={ e=> this.onChange({ description: e.target.value }) } style={{ width:300 }} value={ description } />
-        <Button type='primary' onClick={ this.preAdd }  >新增tags</Button>
-        <div style={{ marginTop:20 }} >Tags列表</div>
-        <div style={{ width:400 }} >
-          <Table columns={ columns } dataSource={ data } pagination={ false }  />
+      <Collapse >
+        <Collapse.Panel key={'1'} header='新增tags' >
+        <div>
+          <Input addonBefore={ 'name*' } onChange={ e=> this.onChange({ name: e.target.value }) } style={{ width:300 }} value={ name }  />
+          <Input addonBefore={ 'description*' } onChange={ e=> this.onChange({ description: e.target.value }) } style={{ width:300 }} value={ description } />
+          <Button type='primary' onClick={ this.preAdd }  >新增tags</Button>
+          <div style={{ marginTop:20 }} >Tags列表</div>
+          <div style={{ width:400 }} >
+            <Table columns={ columns } dataSource={ data } pagination={ false }  />
+          </div>
         </div>
-      </div>
+        </Collapse.Panel>
+      </Collapse>
     )
   }
 }
 
 export default Tags
+
+{/* <Collapse >
+            <Collapse.Panel key={'1'} header='新增tags' >
+              <Tags />  
+            </Collapse.Panel>
+          </Collapse> */}

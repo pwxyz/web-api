@@ -4,6 +4,9 @@ import { methodArr, initApiData } from './constants'
 import reqToParameters from  'utils/reqToParameters'
 import addPathItem  from 'utils/addPathItem'
 
+// import pathObjToArr from 'utils/pathObjToArr'
+
+// import definitionsToObj from 'utils/definitionsToObj'
 
 const initRes = 
 `{
@@ -121,6 +124,14 @@ export default {
     },
 
     uploadJson(state, action){
+      let apiData = action.payload
+      let tagsList = apiData.tags
+      // console.log(pathObjToArr(apiData.paths))
+      // console.log(definitionsToObj(apiData.paths, apiData.definitions))
+      return { ...state, apiData, tagsList }
+    },
+
+    changeHead(state, action){
       let apiData = action.payload
       return { ...state, apiData }
     }

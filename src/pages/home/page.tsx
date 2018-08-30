@@ -4,11 +4,17 @@ import React from 'react'
 import  commonProps from 'components/commonProps'
 import ModalContent from './components/ModalContent'
 import { Modal, Button } from 'antd'
+import Head from './components/Head'
+import PathTable from './components/PathTable'
 
 
 interface props {
   dispatch?: (any:any) => void
-  
+  state:{
+    home:{
+      apiData: object
+    }
+  }
 }
 
 interface state{
@@ -62,6 +68,8 @@ class Home extends React.Component<props, state>{
       <div style={{ marginLeft:200 }} >
         <input type='file' accept={ 'application/json' }  onChange={ this.getFile } ref={ file => this.refss = file }  />
         <Button type='primary' onClick={ this.showModal } >新增路由</Button>
+        <Head/>
+        <PathTable obj={ this.props.state.home.apiData['paths'] ||{} } definitions={ this.props.state.home.apiData['definitions'] } />
         <Modal
           visible={this.state.visible}
           keyboard={ false }

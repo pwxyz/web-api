@@ -1,12 +1,13 @@
 
 
 import React from 'react'
-import { Collapse, Input, Select, Table, Button } from 'antd'
+import {  Input, Select, Table, Button } from 'antd'
 import commonProps from 'components/commonProps'
 import { methodArr } from '../../constants'
 import Req from '../Req'
 import Tags from '../Tags'
 import Editor from '../Editor'
+
 
 
 interface props {
@@ -29,6 +30,18 @@ interface props {
 interface state{
   sourceObj: object
 }
+
+const checkRes = res => {
+  try{
+    JSON.parse(res)
+    return true
+  }
+  catch(err){
+    return false
+  }
+}
+
+
 
 @commonProps()
 class ModalConent extends React.Component<props, state>{
@@ -91,15 +104,15 @@ class ModalConent extends React.Component<props, state>{
   render(){
     const { res, sourceObj,  method, reqTable, tagsList, tags, router, description } = this.props.state.home
     let data = reqTable.map((i, index )=> { i['key'] = index; return i } )
-
+  
     return(
       <div>
         <div style={{ width:1000 }} >
-          <Collapse >
-            <Collapse.Panel key={'1'} header='新增tags' >
+          {/* <Collapse >
+            <Collapse.Panel key={'1'} header='新增tags' > */}
               <Tags />  
-            </Collapse.Panel>
-          </Collapse>
+            {/* </Collapse.Panel>
+          </Collapse> */}
         </div>
         <div style={{ marginTop:10 }} >
           <Input addonBefore={ '路由:*' }  placeholder='/home/edit' onChange={ e => this.titleChange({ router: e.target.value })  } style={{ width:300 }} value={ router } />
@@ -138,7 +151,7 @@ class ModalConent extends React.Component<props, state>{
           <Editor value={ res }  width={ 800 } height={ 400 }  type='home/resChange'  />
           
         </div>
-        <div style={{color:`${sourceObj['type'].length ? 'rgba(0,0,0,0)': 'red' }`  }} >JSON格式不正确!!!</div>
+        <div style={{color:`${checkRes(res) ? 'rgba(0,0,0,0)': 'red' }`  }} >JSON格式不正确!!!</div>
         <Button type='primary' onClick={ this.addRouter }  >提交</Button>
       </div>
     )

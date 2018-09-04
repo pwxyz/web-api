@@ -94,19 +94,30 @@ class ModalConent extends React.Component<props, state>{
   downloadConfig = () => {
     const { res, router, reqTable } = this.props.state.home
     
-    let arr = resToTableConfig(res, reqTable)
+    let obj = resToTableConfig(res, reqTable)
+    let arr = this.getObjKeys(obj)
     let name = this.getConfigName(router)
-    if(arr.length===0){
+    let len = arr.length
+    if(len===0){
         notification.error({
           description:'payload中的一级目录下不存在key值包含data且数据类型为数组的字段',
           message:'错误提示'
         })
     }
-    if(arr.length){
+    if(len){
       // console.log(name)
-      downloadjs(JSON.stringify({columns: arr},null, 2), name, "application/json" )
+      
+      for(let i=0; i<len; i++){
+        let names = name+ this.getFirstUpper(arr[i])
+        downloadjs(JSON.stringify(obj[arr[i]],null, 2), names, "application/json" )
+      }
+      
     }
   }
+
+  getFirstUpper = str => (str + '').replace(/^[a-zA-Z]/, match=> match.toLocaleUpperCase() )
+
+  getObjKeys = obj =>  Object.keys(obj)
 
   getConfigName = router => {
     let routers = router[0]==='/'? router.substr(1) : router 

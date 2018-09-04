@@ -15,14 +15,15 @@ const transformObj = obj =>{
     let type = getValueType(obj[key])
     if(['integer', 'string', 'boolean'].indexOf(type)!==-1){
       objs[splitArr(key)[0]] = {
-        type,
-        description: splitArr(key)[1]||''
+        description: splitArr(key)[1]||'',
+        example:obj[key]||'',
+        type
       }
+
     }
     else if(type==='array'){
       objs[splitArr(key)[0]] = {
         type,
-        description: splitArr(key)[1]||'',
         items: transformObj(obj[key])[0]
       }
     }
@@ -30,7 +31,6 @@ const transformObj = obj =>{
       objs[splitArr(key)[0]] = {
         type,
         properties: transformObj(obj[key]),
-        description: splitArr(key)[1]||'',
       }
     }
   }

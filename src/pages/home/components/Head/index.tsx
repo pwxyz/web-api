@@ -13,7 +13,8 @@ interface props{
   dispatch?:(any:any) => void
   state?:{
     home:{
-      apiData: object
+      apiData: object,
+      name: string
     }
   }
 }
@@ -42,11 +43,6 @@ class Head extends Component<props,state>{
       }
   }
 
-  onFocus= key => {
-    console.log('xx', key)
-    let foucs = { ...this.state.foucs, [key]: true }
-    this.setState({ foucs })
-  }
 
   onChange = (value, str) => {
     let  apiData  = this.props.state.home.apiData
@@ -54,12 +50,17 @@ class Head extends Component<props,state>{
     this.props.dispatch({ type:'home/changeHead', payload: apiData })
   }
 
+  changeName = value => {
+    this.props.dispatch({ type:'home/changeName', payload: value })
+  }
+
   render(){
-    const { foucs } = this.state
-    const { apiData } = this.props.state.home
-    console.log(apiData)
+    const { apiData, name } = this.props.state.home
+    // console.log(apiData)
     return(
       <div className={ css.input } >
+        <Input  addonBefore={ '文件名' } value={ name } disabled={ false } 
+                  onChange={ e => this.changeName(e.target.value)  }   />
         {
           arr.map(i =>
             <Input key={ i.value } addonBefore={ i.value } value={ getObjValues(apiData, i.value ) } disabled={ false } 

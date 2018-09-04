@@ -23,12 +23,14 @@ const checkRouter = str => {
 const firstUpperCase = str => typeof str ==='string' ? str.substring(0,1).toUpperCase()+ str.substring(1) : str
 
 const getRef = (router, method) => {
-  let arr = router.split('/').slice(1)
-  if(arr.length===1) {
-    return arr[0]+ firstUpperCase(method) + 'Responses'
-  }
-  let str = arr[0] + arr.slice(1).map(i => firstUpperCase(i) )+ firstUpperCase(method)  + 'Responses'
-  return str
+  // let arr = router.split('/').slice(1)
+  // if(arr.length===1) {
+  //   return arr[0]+ firstUpperCase(method) + 'Responses'
+  // }
+  // let str = arr[0] + arr.slice(1).map(i => firstUpperCase(i) )+ firstUpperCase(method)  + 'Responses'
+  // return str
+  const str = router.substr(1).replace(/\/[a-zA-Z]/g, match => match.substr(1).toLocaleUpperCase() )
+  return str + method.replace(/[a-zA-z]/, match=> match.toLocaleUpperCase() ) + 'Responses'
 }
 
 const checkRef = ( ref, obj ) => {
@@ -52,7 +54,7 @@ const checkRes = res => {
 }
 
 const addPathItem = state => {
-  const { router,tags, description, method,  reqTable, res, needToken,  apiData,   } = state
+  const { router,tags, description, method,  reqTable, res, needToken,  apiData, edit  } = state
   if(!checkRouter(router)){
     message.error('router 格式不正确，正确的格式为/xx或/xx/xx-xx, 其中只允许a-z、A-Z、/、-这些字符')
     return 
@@ -74,7 +76,7 @@ const addPathItem = state => {
   let pathItem = {}
   pathItem[router] = {
     [method]:{
-      tags,
+      tags: [ tags ],
       summary: description,
       description: description,
       consumes,
@@ -92,16 +94,25 @@ const addPathItem = state => {
   }
 
   let definitionsItem = {
-    [definitionsRef]: resToResponses(res)
+    [definitionsRef]: {
+      type: 'object',
+      properties: resToResponses(res)
+    }
   }
 
   let newApiData = copy(apiData)
-
-  newApiData['paths'] = { ...newApiData.paths, ...pathItem }
+  if(newApiData['paths'][router]){
+    newApiData['paths'][router] = { ...newApiData.paths[router], ...pathItem[router] }
+  }
+  else if(!newApiData['paths'][router]) {
+    newApiData['paths'] = { ...newApiData.paths, ...pathItem }
+  }
+  
 
   newApiData['definitions'] = { ...newApiData.definitions, ...definitionsItem }
 
-  message.success('新增api成功')
+  let str = edit ? '修改api成功': '新增api成功'
+  message.success(str)
 
   return newApiData
 

@@ -7,7 +7,10 @@ import { methodArr } from '../../constants'
 import Req from '../Req'
 import Tags from '../Tags'
 import Editor from '../Editor'
-
+import resToTableConfig  from 'utils/resToTableConfig'
+import downloadjs from 'downloadjs'
+import { notification } from 'antd'
+import checkRouterAndMethod from 'utils/checkRouterAndMethod'
 
 
 interface props {
@@ -21,6 +24,8 @@ interface props {
       tags: string
       description: string 
       router: string
+      edit: string
+      apiData: object
     }
     
   }
@@ -28,7 +33,7 @@ interface props {
 }
 
 interface state{
-  sourceObj: object
+  // sourceObj: object
 }
 
 const checkRes = res => {
@@ -48,29 +53,14 @@ class ModalConent extends React.Component<props, state>{
   constructor(props){
     super(props)
     this.state={
-      sourceObj:{}
+      // sourceObj:{}
     }
   }
-  refss = null
+  // refss = null
   componentDidMount(){
   }
 
-  getFile = e => {
-    var reader = new FileReader();
-    let file = this.refss.files[0]
-    console.log(file)
-    if(file.type!=="application/json") {
-      this.refss = null
-      return
-    }
-    let that = this
-    reader.readAsText(file, 'UTF-8')
-    reader.onload = function () {
-        let str = reader.result +''
-        let sourceObj = JSON.parse(str) 
-        that.setState({ sourceObj })
-    }
-  }
+
 
    columns = [
     { title: '描述', dataIndex: 'description' },
@@ -101,28 +91,54 @@ class ModalConent extends React.Component<props, state>{
     this.props.dispatch({ type: 'home/addRouter' })
   }
 
+  downloadConfig = () => {
+    const { res, router, reqTable } = this.props.state.home
+    
+    let arr = resToTableConfig(res, reqTable)
+    let name = this.getConfigName(router)
+    if(arr.length===0){
+        notification.error({
+          description:'payload中的一级目录下不存在key值包含data且数据类型为数组的字段',
+          message:'错误提示'
+        })
+    }
+    if(arr.length){
+      // console.log(name)
+      downloadjs(JSON.stringify({columns: arr},null, 2), name, "application/json" )
+    }
+  }
+
+  getConfigName = router => {
+    let routers = router[0]==='/'? router.substr(1) : router 
+    return routers.replace(/\/[a-z]/g, match => match.substr(1).toLocaleUpperCase() )
+  }
+
+  resetModal = () => {
+    this.props.dispatch({ type:'home/modalReset' })
+  }
+
+
   render(){
-    const { res, sourceObj,  method, reqTable, tagsList, tags, router, description } = this.props.state.home
+    const { res, sourceObj,  method, reqTable, tagsList, tags, router, description, edit, apiData } = this.props.state.home
     let data = reqTable.map((i, index )=> { i['key'] = index; return i } )
-  
+    let isHave = checkRouterAndMethod(apiData, router, method)
+    // console.log(isHave)
     return(
       <div>
         <div style={{ width:1000 }} >
-          {/* <Collapse >
-            <Collapse.Panel key={'1'} header='新增tags' > */}
-              <Tags />  
-            {/* </Collapse.Panel>
-          </Collapse> */}
+          <Tags />  
         </div>
+        <Button type='primary' disabled={ !!edit } onClick={ this.resetModal } style={{ marginTop:10 }} >重置</Button>
         <div style={{ marginTop:10 }} >
-          <Input addonBefore={ '路由:*' }  placeholder='/home/edit' onChange={ e => this.titleChange({ router: e.target.value })  } style={{ width:300 }} value={ router } />
+          <Input  addonBefore={ '路由:*' }  placeholder='/home/edit' onChange={ e => this.titleChange({ router: e.target.value })  } 
+                  style={{ width:300 }} value={ router }  disabled={ !!edit } />
         </div>
         {/* <div style={{ marginTop:10 }} >
           <Input addonBefore={ 'tags:*' } placeholder='home' onChange={ e => this.titleChange({ tags: e.target.value })  } style={{ width:300 }} />
         </div> */}
         <div  style={{ marginTop:10 }} >
           <span style={{ marginRight:10 }}>tags:*</span>
-          <Select style={{ width: 120 }}  onChange={ value => this.titleChange({ tags: value })  } value={ tags  } >
+          <Select style={{ width: 320 }}  onChange={ value => this.titleChange({ tags: value })  } value={ tags  }  >
             {
               tagsList.map(i =>  
                 <Select.Option key={ i['name'] } >{ i['name'] }</Select.Option>)
@@ -135,24 +151,26 @@ class ModalConent extends React.Component<props, state>{
         </div>
         <div  style={{ marginTop:10 }} >
           <span style={{ marginRight:10 }}>方法:*</span>
-          <Select style={{ width: 120 }}  onChange={ value => this.titleChange({ method: value })  } value={ method} >
+          <Select style={{ width: 120 }}  onChange={ value => this.titleChange({ method: value })  } value={ method} disabled={!!edit} >
             {
               methodArr.map(i =>  
                 <Select.Option key={ i } >{ i }</Select.Option>)
             }
           </Select>
+          <span style={{ color:'red', marginLeft:30, display:`${isHave&&!edit ? 'inline-block':'none'}` }} >警告：在此api下，已有该方法，新增此api后，原方法将会被覆盖</span>
         </div>
 
         <Req sourceObj={ sourceObj } reqTable={ reqTable } />
 
         <Table columns={ this.columns } dataSource={ data } style={{ width:800 }}  />
+        <Button disabled={ !checkRes(res) } onClick={ this.downloadConfig } type='primary' >下载tableConfig文件</Button>
         <div  >
-          <span style={{ margin:20, fontSize:20,  }} >res</span>
+          <span style={{ margin:20, fontSize:20,  }} >res*</span>
           <Editor value={ res }  width={ 800 } height={ 400 }  type='home/resChange'  />
           
         </div>
         <div style={{color:`${checkRes(res) ? 'rgba(0,0,0,0)': 'red' }`  }} >JSON格式不正确!!!</div>
-        <Button type='primary' onClick={ this.addRouter }  >提交</Button>
+        <Button type='primary' onClick={ this.addRouter }  disabled={ !checkRes(res) } >{ edit? '修改': '提交'  }</Button>
       </div>
     )
   }

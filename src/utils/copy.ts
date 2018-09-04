@@ -1,5 +1,9 @@
 
 
-const copy = arg => JSON.parse(JSON.stringify(arg))
+const copy = arg => {
+  // console.log(arg)
+
+  return JSON.parse(JSON.stringify(arg))
+}
 
 export default copy

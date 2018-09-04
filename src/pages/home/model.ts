@@ -36,12 +36,14 @@ const initState = {
   description:'',
   req: initReq,
   res: initRes,
+  reqTable: inintReqTable,
 }
 
 
 export default {
   namespace: 'home',
   state: {
+    name: 'api.json',
     apiData:initApiData,
     router:'',
     tags: '',
@@ -52,7 +54,8 @@ export default {
     reqTable: inintReqTable,
     res: initRes,
     needToken: true,
-    sourceObj: getSourceObj(initRes)
+    sourceObj: getSourceObj(initRes),
+    edit: '',
   },
 
   subscriptions:{
@@ -110,7 +113,7 @@ export default {
 
     addRouter(state, action){
       let apiData = addPathItem(state)
-      console.log(!!apiData)
+      // console.log(!!apiData)
       if(!!apiData){
         return { ...state, apiData, ...initState }
       }
@@ -124,16 +127,44 @@ export default {
     },
 
     uploadJson(state, action){
-      let apiData = action.payload
+      let apiData = action.payload.apiData
+      let name = action.payload.name
       let tagsList = apiData.tags
-      // console.log(pathObjToArr(apiData.paths))
-      // console.log(definitionsToObj(apiData.paths, apiData.definitions))
-      return { ...state, apiData, tagsList }
+      return { ...state, apiData, tagsList, name }
     },
 
     changeHead(state, action){
       let apiData = action.payload
       return { ...state, apiData }
+    },
+
+    delTagslist(state, action){
+      let tagsList = state.tagsList.filter((i,index) => index!==action.payload )
+      let apiData = state.apiData
+      apiData.tags = tagsList
+      return { ...state, tagsList, apiData }
+    },
+
+    changeName(state, action){
+      let name = action.payload
+      return { ...state, name }
+    },
+
+    delRouter(state, action){
+      let apiData = action.payload
+      return { ...state, apiData }
+    },
+
+    editRouter(state, action){
+      return { ...state, ...action.payload }
+    },
+
+    showModal(state, action){
+      return { ...state, edit:'' }
+    },
+
+    modalReset(state, action){
+      return { ...state, ...initState }
     }
   }
 }

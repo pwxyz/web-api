@@ -6,7 +6,7 @@ import filterSelectParmas from 'utils/filterSelectParmas'
 
 const Item = ({ text, onChange, value, type='input', initValue='', sourceObj={}, selectValue=any => any }) => 
   <div style={{ margin:10 }} >
-    <span style={{ marginRight: 15 }} >{ text + '*:   ' }</span>
+    <span style={{ marginRight: 15 }} >{ text + ':   ' }</span>
     {
       type==='input' ? <AutoComplete  onChange={ change => onChange({ [value]: change })  }
                                       dataSource={ sourceObj[value]||[] }
@@ -30,7 +30,7 @@ const Item = ({ text, onChange, value, type='input', initValue='', sourceObj={},
 
 const arr = [
   { text: '描述', value: 'description',   },
-  { text: '值或key', value: 'name',   },
+  { text: '值或key*', value: 'name',   },
 ]
 
 const typeArr = ['string', 'integer', 'object', 'array' ]
@@ -65,13 +65,13 @@ class Req extends React.Component<props, state>{
   }
 
   selectValue = num => {
-    console.log('num', num)
+    // console.log('num', num)
     this.props.dispatch({ type: 'home/selectValue', payload:num })
   }
 
   addParams = () => {
     let req = this.props.state.home.req
-    console.log(req)
+    // console.log(req)
     if(this.checkObj(req)){
       this.props.dispatch({ type: 'home/addParams' })
     }
@@ -82,7 +82,7 @@ class Req extends React.Component<props, state>{
 
   checkObj = obj => {
     for(let key in obj){
-      if(!obj[key]&&['boolean', 'number'].indexOf( typeof obj[key] )===-1) return false 
+      if(!obj[key]&&['boolean', 'number'].indexOf( typeof obj[key] )===-1&&key!=='description') return false 
     }
     return true
   }
@@ -97,6 +97,8 @@ class Req extends React.Component<props, state>{
 
     // console.log('filterSelectParmas',filterSelectParmas(sourceObj, reqTable))
     const sources = filterSelectParmas(sourceObj, reqTable)
+    // let sources = sourceObj
+
     return(
       <div>
         <div>
@@ -108,8 +110,8 @@ class Req extends React.Component<props, state>{
           <Item key={ i.value } text={ i.text } value={ i.value } onChange={ this.onChange } sourceObj={ sources }
                 selectValue = { this.selectValue } initValue={ state.home.req[i.value] } />)
         }
-        <Item  text={ '类型' } value={ 'type' } onChange={ this.onChange } type='select' initValue={ state.home.req.type } />
-        <Item  text={ 'required' } value={ 'required' } onChange={ this.onChange } type='required' initValue={ state.home.req.required } />
+        <Item  text={ '类型*' } value={ 'type' } onChange={ this.onChange } type='select' initValue={ state.home.req.type } />
+        <Item  text={ 'required*' } value={ 'required' } onChange={ this.onChange } type='required' initValue={ state.home.req.required } />
         <Button type='primary' onClick={ this.addParams } >新增参数</Button>   
       </div>
     )

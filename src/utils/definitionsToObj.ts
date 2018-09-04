@@ -1,6 +1,6 @@
 
 import copy from './copy'
-import changeObjKey from './changeObjKey'
+// import changeObjKey from './changeObjKey'
 import getValueType from './getValueType'
 
 const definitionsToObj = (obj, definitions) => {

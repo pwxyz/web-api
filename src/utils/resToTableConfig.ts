@@ -1,6 +1,7 @@
 
 
 import getValueType from './getValueType'
+import getFirstUpper from './getFirstUpper'
 
 
 const checkStr = str => {
@@ -20,10 +21,11 @@ const getArr = str => str.split('|')
 const getReqKey = arr =>  arr.map(i => i.name )
 
 const getColumns = (obj, arr) => {
-  console.log(arr)
   let array = getReqKey(arr)
-  let columns = []
+  let objs = {}
+  
   for(let key in obj){
+    let columns = []
     let type = getValueType(obj[key])
     if(type==='array'&&checkKey(key)&&getValueType(obj[key][0]==='object')){
       let configObj = obj[key][0]
@@ -40,8 +42,18 @@ const getColumns = (obj, arr) => {
         columns.push(obj)
       }
     }
-  }
-  return columns
+    if(type==='object'){
+      let inObj = getColumns(obj[key], arr)
+      for(let i in inObj){
+        objs[key+ getFirstUpper(i)] = inObj[i]
+      }
+      // objs[key] = getColumns(obj[key], arr)
+    }
+    if(columns.length){
+        objs[key] = { columns }
+      }  
+    }
+  return objs
 }
 
 const resToTableConfig = (str, array) => {
@@ -53,9 +65,9 @@ const resToTableConfig = (str, array) => {
     let obj = JSON.parse(str)
 
     if(obj['payload']){
-      let arr= getColumns(obj['payload'], array)
-
-      return arr
+      let objss= getColumns(obj['payload'], array)
+      console.log('objss',objss)
+      return objss
     }
   
   }

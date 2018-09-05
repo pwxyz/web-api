@@ -13,12 +13,12 @@ npm start
 
 
 ### 功能特点
-- [√] 增加api
-- [√] 筛选api
-- [√] 修改api
-- [√] 删除api
-- [x] 缓存
-- [√] 快速生成简易config.json文件
+- [x] 增加api
+- [x] 筛选api
+- [x] 修改api
+- [x] 删除api
+- [ ] 缓存
+- [x] 快速生成简易config.json文件
 
 ### 新增api
 - 点击新增路由，出现一个modal，有*符号的为必填项

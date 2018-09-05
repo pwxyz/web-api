@@ -100,7 +100,7 @@ class ModalConent extends React.Component<props, state>{
     let len = arr.length
     if(len===0){
         notification.error({
-          description:'payload中的一级目录下不存在key值包含data且数据类型为数组的字段',
+          description:'payload中的key不包含data字段或其类型不为array或其子项类型不为object',
           message:'错误提示'
         })
     }

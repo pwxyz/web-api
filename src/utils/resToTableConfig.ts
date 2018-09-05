@@ -45,12 +45,12 @@ const getColumns = (obj, arr) => {
     if(type==='object'){
       let inObj = getColumns(obj[key], arr)
       for(let i in inObj){
-        objs[key+ getFirstUpper(i)] = inObj[i]
+        objs[key.split('|')[0]+ getFirstUpper(i)] = inObj[i]
       }
       // objs[key] = getColumns(obj[key], arr)
     }
     if(columns.length){
-        objs[key] = { columns }
+        objs[key.split('|')[0]] = { columns }
       }  
     }
   return objs

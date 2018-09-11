@@ -52,8 +52,9 @@ npm start
 目前没有做数据缓存
 
 ### 生产简易config.json文件
-当res的payload的一级key中存在包含data(大小写均可，目前不支持多级子项，当前仅支持一个data)，且其为array，子项为object时，可以点击下载config按钮，得到简易的config.json文件，目前没有对条件进行过多的判断
+当res的payload的key包含data(大小写均可)，可以点击下载tableConfig按钮，下载简易config文件，如下所示：
 ```
+//router 为/home/test
 {                                      
   "status|状态":1,                     
   "message|信息":"获取成功",
@@ -61,10 +62,36 @@ npm start
     "data":[{
       "test|测试":25
     }],
-    "xxData":[{
-      "sdsx|asdg":256
-    }]
+    "obj":{
+      "test":{
+        "xxData":[{
+          "sdsx|asdg":256
+        }]
+      }
+    }
   }
 }
 ```
-当req的参数中name字段包含
+点击下载后，可以得到2个json文件
+```
+//homeTestData.json
+{
+  "columns": [
+    {
+      "dataIndex": "test",
+      "title": "测试"
+    }
+  ]
+}
+
+//homeTestObjTestXxData.json
+{
+  "columns": [
+    {
+      "dataIndex": "sdsx",
+      "title": "asdg"
+    }
+  ]
+}
+```
+

@@ -46,6 +46,7 @@ class Home extends React.Component<props, state>{
     var reader = new FileReader();
     let file = this.refss.files[0]
     // console.log('xx',file)
+    if(!file) return
     if(file.type!=="application/json") {
       this.refss = null
       return

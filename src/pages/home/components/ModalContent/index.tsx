@@ -7,6 +7,7 @@ import { methodArr } from '../../constants'
 import Req from '../Req'
 import Tags from '../Tags'
 import Editor from '../Editor'
+import CodeEditor from '../CodeEditor'
 import resToTableConfig  from 'utils/resToTableConfig'
 import downloadjs from 'downloadjs'
 import { notification } from 'antd'
@@ -177,8 +178,8 @@ class ModalConent extends React.Component<props, state>{
         <Button disabled={ !checkRes(res) } onClick={ this.downloadConfig } type='primary' >下载tableConfig文件</Button>
         <div  >
           <span style={{ margin:20, fontSize:20,  }} >res*</span>
-          <Editor value={ res }  width={ 800 } height={ 400 }  type='home/resChange'  />
-          
+          {/* <Editor value={ res }  width={ 800 } height={ 400 }  type='home/resChange'  /> */}
+          <CodeEditor value={ res } />
         </div>
         <div style={{color:`${checkRes(res) ? 'rgba(0,0,0,0)': 'red' }`  }} >JSON格式不正确!!!</div>
         <Button type='primary' onClick={ this.addRouter }  disabled={ !checkRes(res) } >{ edit? '修改': '提交'  }</Button>

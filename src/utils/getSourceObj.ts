@@ -26,7 +26,8 @@ const getObjAllKeys = obj => {
 
 // }
 
-const isHave = str => str.includes('|')
+
+const isHave = str => str.split('&')[0]&&!!str.split('&')[0].split('|')[1]
 
 const getSourceObj = str => {
   const initObj = {
@@ -39,19 +40,18 @@ const getSourceObj = str => {
     let obj = JSON.parse(str)
 
     if(obj.payload){
-
+      
       let arr = getObjAllKeys(obj.payload)
-
+      
       initObj.description = arr.map(i =>isHave(i) ? i.split('|')[1].split('&')[0] : '暂无' )
-      initObj.name = arr.map(i => isHave(i) ? i.split('|')[0] : i.split('&')[0] )
+      initObj.name = arr.map(i => i.includes('|') ? i.split('|')[0] : i.split('&')[0] )
       initObj.type = arr.map(i => isHave(i) ?  i.split('|')[1].split('&')[1] : i.split('&')[1] )
-
+      // console.log(initObj)
       return initObj
     }
     return initObj
   }
   catch(err){
-    // console.warn('input schema is err \n', err)
     console.warn('input schema is err')
     return initObj
   }
